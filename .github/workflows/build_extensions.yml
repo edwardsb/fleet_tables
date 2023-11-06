@@ -10,7 +10,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          repository: https://github.com/fleetdm/fleet.git
+          repository: fleetdm/fleet
 
 
       - name: Set up Go
