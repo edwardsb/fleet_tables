@@ -18,11 +18,6 @@ jobs:
         with:
           go-version-file: go.mod
 
-      - name: Build macOS binaries
-        run: |
-          GOOS=darwin GOARCH=amd64 go build -o fleetd_tables_amd64 ./orbit/cmd/fleetd_tables
-          GOOS=darwin GOARCH=arm64 go build -o fleetd_tables_arm64 ./orbit/cmd/fleetd_tables
-
       - name: Build Linux and Windows binaries
         run: |
           GOOS=linux go build -o fleetd_tables_linux ./orbit/cmd/fleetd_tables
@@ -33,22 +28,21 @@ jobs:
         with:
           name: binaries
           path: |
-            fleetd_tables_amd64
-            fleetd_tables_arm64
             fleetd_tables_linux
             fleetd_tables_windows
 
   lipo-macOS:
     runs-on: macos-latest
-    needs: build
 
     steps:
-      - uses: actions/checkout@v2
-
-      - name: Download binaries
-        uses: actions/download-artifact@v2
+      - uses: actions/checkout@v4
         with:
-          name: binaries
+          repository: fleetdm/fleet
+
+      - name: Build macOS binaries
+        run: |
+          CGO_ENABLED=1 GOOS=darwin GOARCH=amd64 go build -o fleetd_tables_amd64 ./orbit/cmd/fleetd_tables
+          CGO_ENASBLED=1 GOOS=darwin GOARCH=arm64 go build -o fleetd_tables_arm64 ./orbit/cmd/fleetd_tables
 
       - name: Create universal binary for macOS
         run: |
