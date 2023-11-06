@@ -42,7 +42,7 @@ jobs:
       - name: Build macOS binaries
         run: |
           CGO_ENABLED=1 GOOS=darwin GOARCH=amd64 go build -o fleetd_tables_amd64 ./orbit/cmd/fleetd_tables
-          CGO_ENASBLED=1 GOOS=darwin GOARCH=arm64 go build -o fleetd_tables_arm64 ./orbit/cmd/fleetd_tables
+          CGO_ENABLED=1 GOOS=darwin GOARCH=arm64 go build -o fleetd_tables_arm64 ./orbit/cmd/fleetd_tables
 
       - name: Create universal binary for macOS
         run: |
