@@ -1,7 +1,9 @@
 name: Go Build and Release
 
 on:
-  workflow_dispatch:
+  release:
+    types:
+      - published
 
 jobs:
   build:
@@ -11,8 +13,6 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: fleetdm/fleet
-
-
       - name: Set up Go
         uses: actions/setup-go@v4
         with:
@@ -33,12 +33,10 @@ jobs:
 
   lipo-macOS:
     runs-on: macos-latest
-
     steps:
       - uses: actions/checkout@v4
         with:
           repository: fleetdm/fleet
-
       - name: Build macOS binaries
         run: |
           CGO_ENABLED=1 GOOS=darwin GOARCH=amd64 go build -o fleetd_tables_amd64 ./orbit/cmd/fleetd_tables
@@ -63,17 +61,16 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: binaries
-
       - name: Download macOS universal binary
         uses: actions/download-artifact@v2
         with:
           name: macos-universal
-
-      - name: Upload all binaries as artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: all-binaries
-          path: |
-            ./fleetd_tables_linux.ext
-            ./fleetd_tables_windows.exe
-            ./fleetd_tables_darwin_universal.ext    
+      - name: Upload artifacts to release using GitHub CLI
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release upload ${{ github.event.release.tag_name }} \
+          fleetd_tables_linux.ext \
+          fleetd_tables_windows.exe \
+          fleetd_tables_darwin_universal.ext \
+          --repo ${{ github.repository }}
