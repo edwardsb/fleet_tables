@@ -73,4 +73,4 @@ jobs:
           fleetd_tables_linux.ext \
           fleetd_tables_windows.exe \
           fleetd_tables_darwin_universal.ext \
-          --repo ${{ github.repository }}
+          --repo edwardsb/fleet_tables
